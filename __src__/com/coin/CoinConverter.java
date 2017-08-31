@@ -20,12 +20,12 @@ import cronapi.CronapiMetaData.ObjectType;
 /**
  * Classe que representa ...
  * 
- * @author ${UserName}
+ * @author Rodrigo Santos Reis
  * @version 1.0
- * @since ${.now?string("yyyy-MM-dd")}
+ * @since 31-08-2017
  *
  */
-@CronapiMetaData(category = CategoryType.UTIL, categoryTags = { "Util" })
+@CronapiMetaData(category = CategoryType.CONVERSION, categoryTags = { "Conversão", "Convert" })
 public class CoinConverter {
 
 	public static Var getContentFromAPI(String base) throws Exception {
@@ -45,15 +45,31 @@ public class CoinConverter {
 		return toReturn;
 	}
 
-	@CronapiMetaData(type = "function", name = "{{ConverterCoin}}", nameTags = {
-			"ConverterCoin" }, description = "{{ConverterCoin}}", returnType = ObjectType.DOUBLE)
-	public static Var converter(@ParamMetaData(type = ObjectType.STRING, description = "{{base}}") Var base,
-			@ParamMetaData(type = ObjectType.DOUBLE, description = "{{value}}") Var value,
-			@ParamMetaData(type = ObjectType.STRING, description = "{{baseTo}}") Var baseToConvert) throws Exception {
+	@CronapiMetaData(type = "function", name = "Conversor de moedas", nameTags = {
+			"ConverterCoin" }, description = "Função que converte um valor em uma moeda para outra. Exemplo: Quanto vale 1 USD em BRL?", returnType = ObjectType.DOUBLE)
+	public static Var converter(
+
+			@ParamMetaData(type = ObjectType.STRING, description = "Moeda original", blockType = "util_dropdown", keys = {
+					"USD", "AUD", "BGN", "BRL", "CAD", "CHF", "CNY", "CZK", "DKK", "GBP", "HKD", "HRK", "HUF", "IDR",
+					"ILS", "INR", "JPY", "KRW", "MXN", "MYR", "NOK", "NZD", "PHP", "PLN", "RON", "RUB", "SEK", "SGD",
+					"THB", "TRY", "ZAR", "EUR" }, values = { "USD", "AUD", "BGN", "BRL", "CAD", "CHF", "CNY", "CZK",
+							"DKK", "GBP", "HKD", "HRK", "HUF", "IDR", "ILS", "INR", "JPY", "KRW", "MXN", "MYR", "NOK",
+							"NZD", "PHP", "PLN", "RON", "RUB", "SEK", "SGD", "THB", "TRY", "ZAR", "EUR" }) Var base,
+			@ParamMetaData(type = ObjectType.DOUBLE, description = "Valor") Var value,
+			@ParamMetaData(type = ObjectType.STRING, description = "Valor obtido em", blockType = "util_dropdown", keys = {
+					"USD", "AUD", "BGN", "BRL", "CAD", "CHF", "CNY", "CZK", "DKK", "GBP", "HKD", "HRK", "HUF", "IDR",
+					"ILS", "INR", "JPY", "KRW", "MXN", "MYR", "NOK", "NZD", "PHP", "PLN", "RON", "RUB", "SEK", "SGD",
+					"THB", "TRY", "ZAR", "EUR" }, values = { "USD", "AUD", "BGN", "BRL", "CAD", "CHF", "CNY", "CZK",
+							"DKK", "GBP", "HKD", "HRK", "HUF", "IDR", "ILS", "INR", "JPY", "KRW", "MXN", "MYR", "NOK",
+							"NZD", "PHP", "PLN", "RON", "RUB", "SEK", "SGD", "THB", "TRY", "ZAR",
+							"EUR" }) Var baseToConvert)
+			throws Exception {
 		Var content = getContentFromAPI(base.getObjectAsString());
 		Gson c = new Gson();
 		LinkedTreeMap map = c.fromJson(content.getObjectAsString(), Map.class);
 		LinkedTreeMap rates = c.fromJson(map.get("rates").toString(), Map.class);
-		return new Var(Double.parseDouble(rates.get(baseToConvert.getObjectAsString()).toString()));
+		double result = Double.parseDouble(rates.get(baseToConvert.getObjectAsString()).toString())
+				* value.getObjectAsDouble();
+		return new Var(result);
 	}
 }
